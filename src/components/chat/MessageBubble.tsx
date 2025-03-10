@@ -75,7 +75,15 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
           </div>
         );
       default:
-        return <p className="text-text-primary">{message.content}</p>;
+        return (
+          <p
+            className={
+              isIncoming ? 'text-text-primary' : 'text-white'
+            }
+          >
+            {message.content}
+          </p>
+        );
     }
   };
 
@@ -94,17 +102,17 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
       <div className="flex flex-col">
         <div 
           className={`
-            px-4 py-3 rounded-2xl relative
+            p-3 rounded-2xl relative
             ${isIncoming 
-              ? 'bg-bg-tertiary/80 rounded-tl-none' 
-              : 'bg-gradient-to-br from-accent-primary/20 to-accent-secondary/20 rounded-br-none'
+              ? 'bg-bg-tertiary' 
+              : 'bg-accent-primary'
             }
           `}
         >
           {renderMessageContent()}
         </div>
         
-        <div className={`flex items-center mt-1 text-xs text-text-secondary ${isIncoming ? 'self-start' : 'self-end'}`}>
+        <div className={`flex items-center mt-1 text-xs text-text-primary-30 ${isIncoming ? 'self-start' : 'self-end'}`}>
           <span>{formatTime(message.timestamp)}</span>
           {!isIncoming && message.status && (
             <span className="ml-1">

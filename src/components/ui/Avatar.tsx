@@ -41,15 +41,15 @@ const Avatar: React.FC<AvatarProps> = ({
   const firstLetter = text?.[0] || alt?.[0] || '?';
   
   // Glow effect class
-  const glowClass = glow ? 'ring-2 ring-accent-primary ring-opacity-50 shadow-glow-sm' : '';
+  // const glowClass = glow ? 'ring-2 ring-accent-primary ring-opacity-50 shadow-glow-sm' : '';
 
   return (
     <div className={`relative ${className}`}>
       <div 
         className={`
-          ${sizeMap[size]} flex items-center justify-center rounded-full 
+          ${sizeMap[size]} flex items-center justify-center rounded-xl
           bg-gradient-to-br from-accent-primary to-accent-secondary
-          font-semibold text-bg-primary ${glowClass}
+          font-semibold text-white
         `}
       >
         {src ? (

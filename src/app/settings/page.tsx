@@ -1,18 +1,40 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SideNav from '@/components/layout/SideNav';
 import GlassCard from '@/components/ui/GlassCard';
 import Button from '@/components/ui/Button';
 import Avatar from '@/components/ui/Avatar';
-import { User, Lock, Bell, Palette, Smartphone, Globe, Shield, LogOut, Moon, Sun, LifeBuoy, Eye, EyeOff } from 'lucide-react';
+import { 
+  User, Lock, Bell, Palette, Smartphone, Globe, Shield, LogOut, 
+  Moon, Sun, LifeBuoy, Eye, EyeOff 
+} from 'lucide-react';
 
 type SettingsTab = 'profile' | 'security' | 'notifications' | 'appearance' | 'language' | 'devices';
 
+// Initialize darkMode based on localStorage (or default to light mode)
+const getInitialTheme = (): boolean => {
+  if (typeof window !== 'undefined') {
+    const savedTheme = localStorage.getItem('theme');
+    return savedTheme ? savedTheme === 'dark' : false;
+  }
+  return false;
+};
+
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<SettingsTab>('profile');
-  const [darkMode, setDarkMode] = useState(true);
-  
+  const [darkMode, setDarkMode] = useState<boolean>(getInitialTheme);
+
+  // Update the document's class and persist theme change when darkMode state changes
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('theme', darkMode ? 'dark' : 'light');
+  }, [darkMode]);
+
   // 示例设备数据
   const devices = [
     { id: '1', name: 'Windows PC', lastActive: '现在', current: true, location: '北京', browser: 'Chrome' },
@@ -180,7 +202,7 @@ export default function SettingsPage() {
               {devices.map((device, index) => (
                 <div 
                   key={device.id}
-                  className={`p-6 ${index !== devices.length - 1 ? 'border-b border-white/5' : ''} ${device.current ? 'bg-accent-primary/5' : ''}`}
+                  className={`p-6 ${index !== devices.length - 1 ? 'border-b border-white/10' : ''} ${device.current ? 'bg-accent-primary/5' : ''}`}
                 >
                   <div className="flex justify-between items-start">
                     <div>
@@ -225,7 +247,9 @@ export default function SettingsPage() {
               
               <div className="flex gap-4 mb-6">
                 <div 
-                  className={`w-32 h-24 rounded-lg bg-bg-primary border-2 flex flex-col justify-between p-3 cursor-pointer ${darkMode ? 'border-accent-primary' : 'border-white/10'}`}
+                  className={`w-32 h-24 rounded-lg bg-bg-primary border-2 flex flex-col justify-between p-3 cursor-pointer ${
+                    darkMode ? 'border-accent-primary' : 'border-white/10'
+                  }`}
                   onClick={() => setDarkMode(true)}
                 >
                   <Moon size={18} className="text-text-primary" />
@@ -233,7 +257,9 @@ export default function SettingsPage() {
                 </div>
                 
                 <div 
-                  className={`w-32 h-24 rounded-lg bg-white border-2 flex flex-col justify-between p-3 cursor-pointer ${!darkMode ? 'border-accent-primary' : 'border-white/10'}`}
+                  className={`w-32 h-24 rounded-lg bg-white border-2 flex flex-col justify-between p-3 cursor-pointer ${
+                    !darkMode ? 'border-accent-primary' : 'border-white/10'
+                  }`}
                   onClick={() => setDarkMode(false)}
                 >
                   <Sun size={18} className="text-gray-800" />

@@ -4,6 +4,8 @@ import ChatInput from './ChatInput';
 import Avatar from '../ui/Avatar';
 import EncryptionIndicator from '../features/EncryptionIndicator';
 import { Phone, Video, MoreVertical, PlusCircle, Search, ShieldCheck, Lock } from 'lucide-react';
+import { IoCall } from "react-icons/io5";
+import { IoVideocam } from "react-icons/io5";
 
 export type Message = {
   id: string;
@@ -41,18 +43,18 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   }, [messages]);
 
   return (
-    <div className="flex flex-col h-full bg-bg-secondary">
+    <div className="flex flex-col h-full bg-bg-primary">
       {/* Chat Header */}
-      <div className="p-4 border-b border-white/5 flex justify-between items-center">
+      <div className="p-4 h-20 border-b border-text-primary-5 flex justify-between items-center shadow-[0_4px_10px_rgba(0,0,0,0.05)]">
         <div className="flex items-center gap-3">
           <Avatar text={contactName} status={contactStatus} />
           <div>
             <h3 className="font-semibold text-text-primary">{contactName}</h3>
             <div className="flex items-center gap-2">
-              <p className="text-sm text-text-secondary">
-                {contactStatus === 'online' ? '在线' : 
-                 contactStatus === 'away' ? '离开' : 
-                 contactStatus === 'busy' ? '忙碌中' : '离线'}
+              <p className="text-sm text-text-primary-30">
+                {contactStatus === 'online' ? 'Online' : 
+                 contactStatus === 'away' ? 'Away' : 
+                 contactStatus === 'busy' ? 'Busy' : 'Offline'}
               </p>
               
               {/* Encryption Indicator */}
@@ -62,23 +64,20 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
                   onClick={() => setShowEncryptionInfo(!showEncryptionInfo)}
                 >
                   <Lock size={12} />
-                  <span>端到端加密</span>
+                  <span>End-to-End Encrypted</span>
                 </div>
               )}
             </div>
           </div>
         </div>
         <div className="flex gap-2">
-          <button className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 text-text-primary hover:bg-accent-primary/10 hover:text-accent-primary transition">
-            <Search size={18} />
+          <button className="w-9 h-9 flex items-center justify-center rounded-full bg-accent-primary-10 text-text-primary hover:text-accent-primary transition">
+            <IoCall size={18} />
           </button>
-          <button className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 text-text-primary hover:bg-accent-primary/10 hover:text-accent-primary transition">
-            <Phone size={18} />
+          <button className="w-9 h-9 flex items-center justify-center rounded-full bg-accent-primary-10 text-text-primary hover:bg-accent-primary/10 hover:text-accent-primary transition">
+            <IoVideocam size={18} />
           </button>
-          <button className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 text-text-primary hover:bg-accent-primary/10 hover:text-accent-primary transition">
-            <Video size={18} />
-          </button>
-          <button className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 text-text-primary hover:bg-accent-primary/10 hover:text-accent-primary transition">
+          <button className="w-9 h-9 flex items-center justify-center rounded-full bg-accent-primary-10 text-text-primary hover:bg-accent-primary/10 hover:text-accent-primary transition">
             <MoreVertical size={18} />
           </button>
         </div>
@@ -91,8 +90,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
             <ShieldCheck size={20} />
           </div>
           <div className="flex-1">
-            <p className="text-sm text-text-primary">此对话使用端到端加密，仅对话双方可以查看内容。</p>
-            <button className="text-xs text-accent-primary mt-1">了解更多</button>
+            <p className="text-sm text-text-primary">This conversation is end-to-end encrypted. Only participants can view the content.</p>
+            <button className="text-xs text-accent-primary mt-1">Learn More</button>
           </div>
           <button 
             className="text-text-secondary hover:text-text-primary"

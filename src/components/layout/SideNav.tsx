@@ -2,11 +2,14 @@
 
 import React, { useState } from 'react';
 import Avatar from '../ui/Avatar';
-import { 
-  MessageSquare, Users, Compass, Bell, Settings, LogOut, 
-  Camera, Plus, ChevronDown, Moon, Shield
-} from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
+import { IoChatbubbleEllipses } from "react-icons/io5";
+import { HiUsers } from "react-icons/hi2";
+import { BsFillCameraFill } from "react-icons/bs";
+import { IoNotifications } from "react-icons/io5";
+import { RiSettings3Fill } from "react-icons/ri";
+import { FaCompass } from "react-icons/fa";
+
 
 type NavItem = {
   icon: React.ReactNode;
@@ -24,27 +27,27 @@ type SideNavProps = {
 
 const SideNav: React.FC<SideNavProps> = ({ userName, userAvatar }) => {
   const router = useRouter();
+  const pathname = usePathname();
   const [userStatus, setUserStatus] = useState<UserStatus>('online');
   const [statusMenuOpen, setStatusMenuOpen] = useState(false);
 
   const navItems: NavItem[] = [
-    { icon: <MessageSquare size={22} />, label: '聊天', path: '/chat', badge: 3 },
-    { icon: <Users size={22} />, label: '联系人', path: '/contacts' },
-    { icon: <Compass size={22} />, label: '发现', path: '/discovery' },
-    { icon: <Camera size={22} />, label: '动态', path: '/moments' },
-    { icon: <Bell size={22} />, label: '通知', path: '/notifications', badge: 2 },
-    { icon: <Settings size={22} />, label: '设置', path: '/settings' },
+    { icon: <IoChatbubbleEllipses size={22} />, label: 'Chat', path: '/chat', badge: 3 },
+    { icon: <HiUsers size={22} />, label: 'Contacts', path: '/contacts' },
+    { icon: <FaCompass size={22} />, label: 'Discover', path: '/discovery' },
+    { icon: <BsFillCameraFill size={22} />, label: 'Moments', path: '/moments' },
+    { icon: <IoNotifications size={22} />, label: 'Notifications', path: '/notifications', badge: 2 },
   ];
 
-  // 状态显示文本
+  // Status display text
   const statusText = {
-    online: '在线',
-    away: '离开',
-    busy: '忙碌',
-    offline: '隐身'
+    online: 'Online',
+    away: 'Away',
+    busy: 'Busy',
+    offline: 'Invisible'
   };
 
-  // 状态颜色映射
+  // Status color mapping
   const statusColors = {
     online: 'bg-green-500',
     away: 'bg-yellow-500',
@@ -57,26 +60,20 @@ const SideNav: React.FC<SideNavProps> = ({ userName, userAvatar }) => {
   };
 
   return (
-    <div className="w-20 border-r border-white/5 h-screen bg-bg-secondary flex flex-col items-center pt-titlebar">
-      {/* 用户头像和状态 */}
-      <div className="mt-6 mb-10 relative">
+    <div className="relative z-10 w-20 p-4 h-screen bg-bg-secondary flex flex-col items-center pt-titlebar shadow-[4px_0_10px_rgba(0,0,0,0.1)]">
+      {/* User avatar and status */}
+      <div className="mb-10 relative">
         <div className="relative">
           <Avatar 
             text={userName} 
             src={userAvatar}
-            size="lg" 
+            size="md" 
             status={userStatus}
             glow
           />
-          <button 
-            className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-bg-secondary border border-white/10 flex items-center justify-center text-text-secondary hover:text-accent-primary transition-colors"
-            onClick={() => setStatusMenuOpen(!statusMenuOpen)}
-          >
-            <ChevronDown size={14} />
-          </button>
         </div>
         
-        {/* 状态选择菜单 */}
+        {/* Status selection menu */}
         {statusMenuOpen && (
           <div className="absolute top-full mt-2 right-0 w-40 bg-bg-tertiary/90 backdrop-blur-md rounded-lg shadow-lg border border-white/5 z-50">
             <div className="py-2">
@@ -98,41 +95,59 @@ const SideNav: React.FC<SideNavProps> = ({ userName, userAvatar }) => {
         )}
       </div>
       
-      {/* 导航项 */}
-      <div className="flex-1 flex flex-col items-center gap-7 py-4">
-        {navItems.map((item) => (
-          <button
-            key={item.label}
-            className="group relative w-12 h-12 flex items-center justify-center rounded-xl hover:bg-accent-primary/10 transition-colors"
-            onClick={() => handleNavigation(item.path)}
-          >
-            <span className="text-text-secondary group-hover:text-accent-primary transition-colors">
-              {item.icon}
-            </span>
-            
-            {/* Badge */}
-            {item.badge && (
-              <span className="absolute top-0 right-0 w-5 h-5 rounded-full bg-accent-tertiary text-xs flex items-center justify-center text-white font-medium">
-                {item.badge}
+      {/* Navigation items */}
+      <div className="flex-1 flex flex-col items-center gap-4">
+        {navItems.map((item) => {
+          const isActive = pathname === item.path;
+          return (
+            <button
+              key={item.label}
+              className={`group relative w-10 h-10 m-1 flex items-center justify-center rounded-xl transition-colors ${
+                isActive
+                  ? 'bg-gradient-to-br from-accent-primary-80 to-accent-secondary-80'
+                  : 'hover:bg-gradient-to-br hover:from-accent-primary-80 hover:to-accent-secondary-80'
+              }`}
+              onClick={() => handleNavigation(item.path)}
+            >
+              <span className={`text-text-primary transition-colors ${
+                isActive ? 'text-text-secondary' : 'group-hover:text-text-secondary'
+              }`}>
+                {item.icon}
               </span>
-            )}
-            
-            {/* Tooltip */}
-            <span className="absolute left-full ml-2 px-2 py-1 bg-bg-tertiary/90 backdrop-blur-md rounded text-sm text-text-primary whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-              {item.label}
-            </span>
-          </button>
-        ))}
+              
+              {/* Badge */}
+              {item.badge && (
+                <span className="absolute top-0 right-0 w-5 h-5 rounded-full bg-accent-tertiary text-xs flex items-center justify-center text-white font-medium">
+                  {item.badge}
+                </span>
+              )}
+              
+              {/* Tooltip */}
+              <span className="absolute left-full ml-2 px-2 py-1 bg-bg-tertiary/90 backdrop-blur-md rounded text-sm text-text-primary whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                {item.label}
+              </span>
+            </button>
+          );
+        })}
       </div>
       
-      {/* Create new chat button */}
-      <button className="w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-r from-accent-primary to-accent-secondary text-bg-primary mb-4 hover:shadow-glow-sm transition-all">
-        <Plus size={20} />
-      </button>
-      
-      {/* Logout */}
-      <button className="w-12 h-12 flex items-center justify-center rounded-xl text-text-secondary hover:text-red-400 hover:bg-red-400/10 mb-6 transition-colors">
-        <LogOut size={20} />
+      {/* Bottom settings button */}
+      <button
+        className={`group relative w-10 h-10 m-1 flex items-center justify-center rounded-xl transition-colors ${
+          pathname === '/settings'
+            ? 'bg-gradient-to-br from-accent-primary-80 to-accent-secondary-80'
+            : 'hover:bg-gradient-to-br hover:from-accent-primary-80 hover:to-accent-secondary-80'
+        }`}
+        onClick={() => handleNavigation('/settings')}
+      >
+        <RiSettings3Fill
+          size={22}
+          className={`transition-colors ${
+            pathname === '/settings'
+              ? 'text-text-secondary'
+              : 'text-text-primary group-hover:text-text-secondary'
+          }`}
+        />
       </button>
     </div>
   );

@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import Avatar from '../ui/Avatar';
 import { Search, Plus, Settings, ChevronDown, Pin, Filter } from 'lucide-react';
+import { MdAdd } from "react-icons/md";
+import { IoSearch } from "react-icons/io5";
+import ChatItem from './ChatItem';
 
 type ChatGroup = {
   id: string;
@@ -38,6 +41,11 @@ const ChatList: React.FC<ChatListProps> = ({
   const [groupCollapse, setGroupCollapse] = useState<Record<string, boolean>>({});
   const [showFilterMenu, setShowFilterMenu] = useState(false);
   const [filter, setFilter] = useState<'all' | 'unread' | 'pinned'>('all');
+
+  const totalUnread = chats.reduce((acc, chat) => {
+    if (chat.muted) return acc;   // Skip if muted
+    return acc + chat.unread;
+  }, 0);
   
   // 按分组整理聊天
   const getChatsInGroup = (groupId?: string) => {
@@ -75,27 +83,34 @@ const ChatList: React.FC<ChatListProps> = ({
   const pinnedChats = filterChats(chats.filter(chat => chat.pinned));
   
   return (
-    <div className="w-80 border-r border-white/5 h-full bg-bg-secondary flex flex-col">
+    <div className="w-80 h-full bg-bg-primary flex flex-col border-r-[1.5px] border-text-primary-5">
       {/* Header */}
-      <div className="p-4 border-b border-white/5 flex justify-between items-center">
-        <h2 className="text-lg font-semibold text-text-primary">消息</h2>
+      <div className="p-5 h-20 border-b border-text-primary-5 flex justify-between items-center shadow-[0_4px_10px_rgba(0,0,0,0.05)]">
+        <h2 className="flex items-center text-lg font-semibold text-text-primary">
+          Messages
+          {totalUnread > 0 && (
+            <span className="ml-2 flex items-center justify-center h-5 p-2 rounded-full bg-accent-primary-10 text-xs font-medium text-text-primary">
+              {totalUnread}
+            </span>
+          )}
+        </h2>
         <div className="flex space-x-2">
-          <button 
+          {/* <button 
             className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 text-text-primary hover:bg-accent-primary/10 hover:text-accent-primary transition"
             onClick={() => setShowFilterMenu(!showFilterMenu)}
           >
             <Filter size={18} />
+          </button> */}
+          <button className="group relative w-8 h-8 rounded-full flex items-center justify-center transition-colors bg-transparent bg-gradient-to-br from-accent-primary-80 to-accent-secondary-80">
+            <MdAdd size={26} className='text-white'/>
           </button>
-          <button className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 text-text-primary hover:bg-accent-primary/10 hover:text-accent-primary transition">
-            <Plus size={18} />
-          </button>
-          <button className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 text-text-primary hover:bg-accent-primary/10 hover:text-accent-primary transition">
+          {/* <button className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 text-text-primary hover:bg-accent-primary/10 hover:text-accent-primary transition">
             <Settings size={18} />
-          </button>
+          </button> */}
         </div>
         
         {/* Filter Menu */}
-        {showFilterMenu && (
+        {/* {showFilterMenu && (
           <div className="absolute top-16 right-4 w-40 bg-bg-tertiary/90 backdrop-blur-md rounded-lg shadow-lg border border-white/5 z-50">
             <div className="py-2">
               <button
@@ -127,25 +142,25 @@ const ChatList: React.FC<ChatListProps> = ({
               </button>
             </div>
           </div>
-        )}
+        )} */}
       </div>
       
       {/* Search */}
-      <div className="p-4 border-b border-white/5">
-        <div className="flex items-center gap-2 bg-white/5 rounded-lg px-4 py-2 focus-within:bg-accent-primary/10 focus-within:shadow-glow-sm transition duration-300">
-          <Search size={18} className="text-text-secondary" />
+      <div className="p-4">
+        <div className="flex items-center gap-2 bg-bg-tertiary-80 rounded-xl px-3 py-3">
+          <IoSearch size={26} className="text-text-primary" />
           <input 
             type="text" 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="搜索" 
-            className="bg-transparent w-full outline-none border-none text-text-primary placeholder:text-text-secondary" 
+            placeholder="Search"
+            className="bg-transparent w-full outline-none border-none text-text-primary placeholder:text-text-primary-30" 
           />
         </div>
       </div>
       
       {/* Filter indicator */}
-      {filter !== 'all' && (
+      {/* {filter !== 'all' && (
         <div className="px-4 py-2 bg-accent-primary/5">
           <div className="flex items-center justify-between">
             <span className="text-sm text-accent-primary">
@@ -159,15 +174,15 @@ const ChatList: React.FC<ChatListProps> = ({
             </button>
           </div>
         </div>
-      )}
+      )} */}
       
       {/* Chat List */}
-      <div className="flex-1 overflow-y-auto py-2 scrollbar-thin scrollbar-thumb-accent-primary/30 scrollbar-track-transparent">
+      <div className="flex-1 overflow-y-auto px-2 scrollbar-thin scrollbar-thumb-accent-primary/30 scrollbar-track-transparent">
         {/* No results message */}
         {filterChats(chats).length === 0 && (
-          <div className="flex flex-col items-center justify-center h-40 text-text-secondary p-4 text-center">
-            <span className="text-lg mb-2">没有找到聊天</span>
-            <span className="text-sm">尝试不同的搜索词或开始新的对话</span>
+          <div className="flex flex-col items-center justify-center h-40 text-text-primary-30 p-4 text-center">
+            <span className="text-lg mb-2">No chats found</span>
+            <span className="text-sm">Try a different search term or start a new conversation</span>
           </div>
         )}
         
@@ -176,7 +191,7 @@ const ChatList: React.FC<ChatListProps> = ({
           <div className="mb-2">
             <div className="px-4 py-2 flex items-center">
               <Pin size={14} className="text-accent-primary mr-2" />
-              <span className="text-xs text-text-secondary font-medium">置顶会话</span>
+              <span className="text-xs text-text-secondary font-medium">Pinned Conversations</span>
             </div>
             
             {pinnedChats.map((chat) => (
@@ -251,54 +266,6 @@ const ChatList: React.FC<ChatListProps> = ({
               />
             ))
         }
-      </div>
-    </div>
-  );
-};
-
-// Chat Item Component
-const ChatItem: React.FC<{
-  chat: Chat;
-  isSelected: boolean;
-  onClick: () => void;
-}> = ({ chat, isSelected, onClick }) => {
-  return (
-    <div 
-      className={`
-        flex items-center gap-3 p-3 mx-2 rounded-lg cursor-pointer relative
-        ${isSelected 
-          ? 'bg-accent-primary/5 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-gradient-to-b before:from-accent-primary before:to-accent-secondary' 
-          : 'hover:bg-white/5'
-        }
-        transition-colors duration-300
-      `}
-      onClick={onClick}
-    >
-      <Avatar text={chat.name} src={chat.avatar} status={chat.online ? 'online' : 'offline'} />
-      <div className="flex-1 min-w-0">
-        <div className="flex justify-between">
-          <div className="flex items-center gap-1">
-            <p className="font-semibold text-text-primary truncate">{chat.name}</p>
-            {chat.pinned && <Pin size={12} className="text-accent-primary" />}
-          </div>
-          <span className="text-xs text-text-secondary">{chat.time}</span>
-        </div>
-        <div className="flex justify-between">
-          <p className={`text-sm truncate ${chat.muted ? 'text-text-secondary/50' : 'text-text-secondary'}`}>
-            {chat.lastMessage}
-          </p>
-          {chat.unread > 0 ? (
-            <span className="bg-gradient-to-r from-accent-primary to-accent-secondary text-xs text-bg-primary font-semibold min-w-5 h-5 flex items-center justify-center rounded-full px-1.5">
-              {chat.unread}
-            </span>
-          ) : chat.muted ? (
-            <span className="w-3 h-3 flex items-center justify-center text-text-secondary">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
-                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V13a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-2.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-              </svg>
-            </span>
-          ) : null}
-        </div>
       </div>
     </div>
   );
